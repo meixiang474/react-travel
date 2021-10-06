@@ -1,5 +1,5 @@
 import React from "react";
 
-export const Register: React.FC = () => {
+export const RegisterPage: React.FC = () => {
   return <h1>注册页面</h1>;
 };
