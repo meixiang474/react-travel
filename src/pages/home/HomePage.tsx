@@ -1,16 +1,60 @@
 import React from "react";
 import { Header, Footer, Carousel, SideMenu, Partner } from "components";
-import { Col, Row, Typography } from "antd";
-import { productList1, productList2, productList3 } from "pages/home/mockup";
+import { Col, Row, Spin, Typography } from "antd";
 import sideImage from "assets/images/sider_2019_12-09.png";
 import sideImage2 from "assets/images/sider_2019_02-04.png";
 import sideImage3 from "assets/images/sider_2019_02-04-2.png";
 import { ProductCollection } from "components";
 import styles from "./HomePage.module.scss";
+import { withTranslation, WithTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { Dispatch, RootState } from "store";
+import { fetchRecommendProductsActionCreator } from "store/recommendProducts/actions";
 
-export class HomePage extends React.Component {
+interface Props
+  extends ReturnType<typeof mapStateToProps>,
+    ReturnType<typeof mapDispatchToProsp>,
+    WithTranslation {}
+
+const mapStateToProps = (state: RootState) => {
+  return {
+    loading: state.recommendProducts.loading,
+    error: state.recommendProducts.error,
+    productList: state.recommendProducts.productList,
+  };
+};
+
+const mapDispatchToProsp = (dispatch: Dispatch) => {
+  return {
+    fetchRecommendProducts: () => {
+      dispatch(fetchRecommendProductsActionCreator());
+    },
+  };
+};
+
+class HomePageComponent extends React.Component<Props> {
+  componentDidMount() {
+    if (this.props.productList.length > 0) return;
+    this.props.fetchRecommendProducts();
+  }
+
   render() {
-    return (
+    const { t } = this.props;
+    const { productList, loading, error } = this.props;
+
+    return loading ? (
+      <Spin
+        size="large"
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
+    ) : error ? (
+      <div>网站出错: {error}</div>
+    ) : (
       <>
         <Header />
         {/* 页面内容 content */}
@@ -30,34 +74,39 @@ export class HomePage extends React.Component {
           <ProductCollection
             title={
               <Typography.Title level={3} type="warning">
-                爆款推荐
+                {t("home_page.hot_recommended")}
               </Typography.Title>
             }
             sideImage={sideImage}
-            products={productList1}
+            products={productList[0].touristRoutes}
           />
           <ProductCollection
             title={
               <Typography.Title level={3} type="danger">
-                新品上市
+                {t("home_page.new_arrival")}
               </Typography.Title>
             }
             sideImage={sideImage2}
-            products={productList2}
+            products={productList[1].touristRoutes}
           />
           <ProductCollection
             title={
               <Typography.Title level={3} type="success">
-                国内游推荐
+                {t("home_page.domestic_travel")}
               </Typography.Title>
             }
             sideImage={sideImage3}
-            products={productList3}
+            products={productList[2].touristRoutes}
           />
           <Partner />
         </div>
-        <Footer />
+        <Footer />{" "}
       </>
     );
   }
 }
+
+export const HomePage = connect(
+  mapStateToProps,
+  mapDispatchToProsp
+)(withTranslation()(HomePageComponent));
