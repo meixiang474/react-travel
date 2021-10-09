@@ -13,6 +13,13 @@ request.interceptors.request.use((config) => {
 
 request.interceptors.response.use(
   (res) => {
+    // 兼容分页
+    if (res.headers["x-pagination"]) {
+      return {
+        data: res.data,
+        headers: JSON.parse(res.headers["x-pagination"]),
+      };
+    }
     return res.data;
   },
   (err) => {

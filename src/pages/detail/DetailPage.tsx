@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router";
-import { fetchProductById } from "api";
 import {
   Boundary,
   Header,
@@ -11,6 +10,10 @@ import {
 import styles from "./DetailPage.module.scss";
 import { Col, Row, DatePicker, Divider, Typography, Anchor, Menu } from "antd";
 import { commentMockData } from "./mockup";
+import { useSelector } from "store/hooks";
+import { useDispatch } from "react-redux";
+import { getProductDetail } from "store/productDetail/slice";
+import { Dispatch } from "store";
 
 const { RangePicker } = DatePicker;
 
@@ -18,26 +21,17 @@ interface MatchParams {
   touristRouteId: string;
 }
 
-export const DetailPage: React.FC = (props) => {
+export const DetailPage: React.FC = () => {
   const { touristRouteId } = useParams<MatchParams>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [product, setProduct] = useState<any>(null);
+  const loading = useSelector((state) => state.productDetail.loading);
+  const error = useSelector((state) => state.productDetail.error);
+  const product = useSelector((state) => state.productDetail.data);
+
+  const dispatch = useDispatch<Dispatch>();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const product = await fetchProductById(touristRouteId);
-        setProduct(product);
-      } catch (e: any) {
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [touristRouteId]);
+    dispatch(getProductDetail(touristRouteId));
+  }, [touristRouteId, dispatch]);
 
   return (
     <Boundary

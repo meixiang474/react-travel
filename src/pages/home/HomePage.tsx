@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Footer, Carousel, SideMenu, Partner } from "components";
-import { Col, Row, Spin, Typography } from "antd";
+import { Col, Row, Typography } from "antd";
 import sideImage from "assets/images/sider_2019_12-09.png";
 import sideImage2 from "assets/images/sider_2019_02-04.png";
 import sideImage3 from "assets/images/sider_2019_02-04-2.png";
@@ -13,7 +13,7 @@ import { fetchRecommendProductsActionCreator } from "store/recommendProducts/act
 
 interface Props
   extends ReturnType<typeof mapStateToProps>,
-    ReturnType<typeof mapDispatchToProsp>,
+    ReturnType<typeof mapDispatchToProps>,
     WithTranslation {}
 
 const mapStateToProps = (state: RootState) => {
@@ -24,7 +24,7 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
-const mapDispatchToProsp = (dispatch: Dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     fetchRecommendProducts: () => {
       dispatch(fetchRecommendProductsActionCreator());
@@ -101,5 +101,5 @@ class HomePageComponent extends React.Component<Props> {
 
 export const HomePage = connect(
   mapStateToProps,
-  mapDispatchToProsp
+  mapDispatchToProps
 )(withTranslation()(HomePageComponent));

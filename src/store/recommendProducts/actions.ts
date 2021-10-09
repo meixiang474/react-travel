@@ -29,6 +29,7 @@ export const fetchRecommendProductsActionCreator = () => {
         changeRecommendProductsActionCreator({
           loading: false,
           productList,
+          error: null,
         })
       );
     } catch (e: any) {
