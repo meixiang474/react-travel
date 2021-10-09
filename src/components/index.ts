@@ -4,3 +4,6 @@ export * from "./carousel";
 export * from "./sideMenu";
 export * from "./productCollection";
 export * from "./partner";
+export * from "./boundary";
+export * from "./productIntro";
+export * from "./productComments";
