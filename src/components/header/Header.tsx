@@ -3,7 +3,7 @@ import styles from "./Header.module.scss";
 import logo from "assets/logo.svg";
 import { Dropdown, Input, Layout, Typography, Menu, Button } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "store/hooks";
 import { useDispatch } from "react-redux";
 import {
@@ -13,9 +13,15 @@ import {
 import { useTranslation } from "react-i18next";
 import { Dispatch } from "store";
 
+interface MatchParams {
+  keywords: string;
+}
+
 export const Header: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
+
+  const { keywords } = useParams<MatchParams>();
 
   const language = useSelector((state) => state.language.language);
   const languageList = useSelector((state) => state.language.languageList);
@@ -69,6 +75,7 @@ export const Header: React.FC = () => {
           </Typography.Title>
         </span>
         <Input.Search
+          defaultValue={keywords}
           placeholder="请输入旅游目的地、主题或关键字"
           className={styles["search-input"]}
           onSearch={(keywords) => {

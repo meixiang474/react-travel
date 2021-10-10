@@ -14,5 +14,5 @@ export function fetchSearchProduct(parameters: {
     params.keywords = parameters.keywords;
   }
 
-  return request.get<any, any>(`/touristRoutes`, { params });
+  return request.get<any, any>(`/api/touristRoutes`, { params });
 }

@@ -1,5 +1,11 @@
+import { UserLayout } from "layouts";
 import React from "react";
+import { SignInForm } from "./signInForm";
 
 export const SignInPage: React.FC = () => {
-  return <h1>登录页面</h1>;
+  return (
+    <UserLayout>
+      <SignInForm />
+    </UserLayout>
+  );
 };

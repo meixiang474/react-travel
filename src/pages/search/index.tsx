@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import styles from "./index.module.scss";
-import { Header, Footer, FilterArea, ProductList, Boundary } from "components";
+import { FilterArea, ProductList, Boundary } from "components";
 import { useParams } from "react-router-dom";
 import { searchProduct } from "store/productSearch/slice";
 import { useSelector } from "store/hooks";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "store";
+import { MainLayout } from "layouts";
 
 interface MatchParams {
   keywords: string;
@@ -33,24 +34,20 @@ export function SearchPage() {
       loading={loading}
       error={error}
       render={() => (
-        <>
-          <Header />
-          <div className={styles["page-content"]}>
-            {/* 分类过滤器 */}
-            <div className={styles["product-list-container"]}>
-              <FilterArea />
-            </div>
-            {/* 产品列表 */}
-            <div className={styles["product-list-container"]}>
-              <ProductList
-                data={data}
-                paging={pagination}
-                onPageChange={onPageChange}
-              />
-            </div>
+        <MainLayout>
+          {/* 分类过滤器 */}
+          <div className={styles["product-list-container"]}>
+            <FilterArea />
           </div>
-          <Footer />
-        </>
+          {/* 产品列表 */}
+          <div className={styles["product-list-container"]}>
+            <ProductList
+              data={data}
+              paging={pagination}
+              onPageChange={onPageChange}
+            />
+          </div>
+        </MainLayout>
       )}
     />
   );
