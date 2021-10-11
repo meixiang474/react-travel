@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
 import logo from "assets/logo.svg";
 import { Dropdown, Input, Layout, Typography, Menu, Button } from "antd";
@@ -12,6 +12,12 @@ import {
 } from "store/language/languageActions";
 import { useTranslation } from "react-i18next";
 import { Dispatch } from "store";
+import jwt_decode, { JwtPayload as DefaultJwtPayload } from "jwt-decode";
+import { userSliceActions } from "store/user/slice";
+
+interface JwtPayload extends DefaultJwtPayload {
+  username: string;
+}
 
 interface MatchParams {
   keywords: string;
@@ -25,6 +31,22 @@ export const Header: React.FC = () => {
 
   const language = useSelector((state) => state.language.language);
   const languageList = useSelector((state) => state.language.languageList);
+
+  const { items: shoppingCartItems, loading: shoppingCartLoading } =
+    useSelector((state) => state.shoppingCart);
+
+  console.log(shoppingCartItems);
+
+  const { token } = useSelector((state) => state.user);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    if (token != null) {
+      const jwt = jwt_decode<JwtPayload>(token);
+      setUsername(jwt.username);
+    }
+  }, [token]);
+
   // const dispatch = useDispatch<Dispatch<LanguageActionTypes>>();
   const dispatch = useDispatch<Dispatch>();
 
@@ -35,6 +57,11 @@ export const Header: React.FC = () => {
     } else {
       dispatch(changeLanguageWithEffectActionCreator(e.key));
     }
+  };
+
+  const onLogout = () => {
+    dispatch(userSliceActions.logOut());
+    history.push("/");
   };
 
   return (
@@ -57,14 +84,30 @@ export const Header: React.FC = () => {
           >
             {language === "zh" ? "中文" : "English"}
           </Dropdown.Button>
-          <Button.Group className={styles["button-group"]}>
-            <Button onClick={() => history.push("/register")}>
-              {t("header.register")}
-            </Button>
-            <Button onClick={() => history.push("/signIn")}>
-              {t("header.signin")}
-            </Button>
-          </Button.Group>
+          {token != null ? (
+            <Button.Group className={styles["button-group"]}>
+              <span>
+                {t("header.welcome")}
+                <Typography.Text>{username}</Typography.Text>
+              </span>
+              <Button
+                loading={shoppingCartLoading}
+                onClick={() => history.push("/shoppingCart")}
+              >
+                {t("header.shoppingCart")}({shoppingCartItems.length})
+              </Button>
+              <Button onClick={onLogout}>{t("header.signOut")}</Button>
+            </Button.Group>
+          ) : (
+            <Button.Group className={styles["button-group"]}>
+              <Button onClick={() => history.push("/register")}>
+                {t("header.register")}
+              </Button>
+              <Button onClick={() => history.push("/signIn")}>
+                {t("header.signin")}
+              </Button>
+            </Button.Group>
+          )}
         </div>
       </div>
       <Layout.Header className={styles["main-header"]}>

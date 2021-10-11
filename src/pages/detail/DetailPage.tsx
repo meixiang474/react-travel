@@ -1,14 +1,25 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router";
+import { useHistory, useLocation, useParams } from "react-router";
 import { Boundary, ProductIntro, ProductComments } from "components";
 import styles from "./DetailPage.module.scss";
-import { Col, Row, DatePicker, Divider, Typography, Anchor, Menu } from "antd";
+import {
+  Col,
+  Row,
+  DatePicker,
+  Divider,
+  Typography,
+  Anchor,
+  Menu,
+  Button,
+} from "antd";
 import { commentMockData } from "./mockup";
 import { useSelector } from "store/hooks";
 import { useDispatch } from "react-redux";
 import { getProductDetail } from "store/productDetail/slice";
 import { Dispatch } from "store";
 import { MainLayout } from "layouts";
+import { ShoppingCartOutlined } from "@ant-design/icons";
+import { addShoppingCartItem } from "store/shoppingCart/slice";
 
 const { RangePicker } = DatePicker;
 
@@ -17,10 +28,18 @@ interface MatchParams {
 }
 
 export const DetailPage: React.FC = () => {
+  const history = useHistory();
+  const location = useLocation();
   const { touristRouteId } = useParams<MatchParams>();
   const loading = useSelector((state) => state.productDetail.loading);
   const error = useSelector((state) => state.productDetail.error);
   const product = useSelector((state) => state.productDetail.data);
+
+  const { token } = useSelector((state) => state.user);
+
+  const { loading: shoppingCartLoading } = useSelector(
+    (state) => state.shoppingCart
+  );
 
   const dispatch = useDispatch<Dispatch>();
 
@@ -50,6 +69,27 @@ export const DetailPage: React.FC = () => {
                 />
               </Col>
               <Col span={11}>
+                <Button
+                  style={{ marginTop: 50, marginBottom: 30, display: "block" }}
+                  type="primary"
+                  danger
+                  loading={shoppingCartLoading}
+                  onClick={() => {
+                    if (token == null) {
+                      history.push({
+                        pathname: "/signIn",
+                        state: { from: location.pathname },
+                      });
+                    } else {
+                      dispatch(
+                        addShoppingCartItem({ touristRouteId: product.id })
+                      );
+                    }
+                  }}
+                >
+                  <ShoppingCartOutlined />
+                  放入购物车
+                </Button>
                 <RangePicker open style={{ marginTop: 20 }} />
               </Col>
             </Row>

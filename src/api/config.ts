@@ -8,6 +8,12 @@ export const request = axios.create({
 });
 
 request.interceptors.request.use((config) => {
+  const userStr = localStorage.getItem("persist:user");
+  const user = JSON.parse(userStr || "null");
+  const token = JSON.parse(user?.token || "null");
+  if (token) {
+    config.headers!["Authorization"] = `bearer ${token}`;
+  }
   return config;
 });
 

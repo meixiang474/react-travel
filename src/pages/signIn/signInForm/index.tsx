@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styles from "./index.module.scss";
 import { Form, Input, Checkbox, Button, message } from "antd";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "store";
 import { useSelector } from "store/hooks";
@@ -17,15 +17,15 @@ const tailLayout = {
 
 export function SignInForm() {
   const history = useHistory();
-
+  const { state } = useLocation<{ from?: string } | undefined>();
   const dispatch = useDispatch<Dispatch>();
   const { loading, error, token } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (token != null) {
-      history.push("/");
+      history.push(state?.from || "/");
     }
-  }, [token, history]);
+  }, [token, history, state?.from]);
 
   useEffect(() => {
     if (error != null) {
@@ -34,6 +34,15 @@ export function SignInForm() {
   }, [error]);
 
   const onFinish = async (values: any) => {
+    // const { error } = (await dispatch(
+    //   signIn({ email: values.username, password: values.password })
+    // )) as any;
+    // if (error == null) {
+    //   history.push(state?.from || "/");
+    //   return;
+    // }
+    // message.error("登录失败");
+
     dispatch(signIn({ email: values.username, password: values.password }));
   };
   const onFinishFailed = (error: any) => {
