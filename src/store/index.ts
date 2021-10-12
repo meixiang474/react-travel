@@ -5,6 +5,7 @@ import { productDetailSlice } from "./productDetail/slice";
 import { productSearchSlice } from "./productSearch/slice";
 import { userSlice } from "./user/slice";
 import { shoppingCartSlice } from "./shoppingCart/slice";
+import { orderSlice } from "./order/slice";
 import { log } from "./middlewares";
 import {
   persistStore,
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   productSearch: productSearchSlice.reducer,
   user: persistReducer(userPersistConfig, userSlice.reducer),
   shoppingCart: shoppingCartSlice.reducer,
+  order: orderSlice.reducer,
 });
 
 // const persistedReducer = persistReducer(rootPersistConfig, rootReducer);

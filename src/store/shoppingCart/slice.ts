@@ -3,6 +3,7 @@ import {
   addShoppingCartItemAPI,
   clearShoppingCartItemAPI,
   getShoppingCartAPI,
+  checkoutAPI,
 } from "api";
 
 interface ShoppingCartState {
@@ -32,6 +33,11 @@ export const addShoppingCartItem = createAsyncThunk(
     return shoppingCartItems;
   }
 );
+
+export const checkout = createAsyncThunk("shoppingCart/checkout", async () => {
+  const data = await checkoutAPI();
+  return data;
+});
 
 export const clearShoppingCartItem = createAsyncThunk(
   "shoppingCart/clearShoppingCartItem",
@@ -78,6 +84,18 @@ export const shoppingCartSlice = createSlice({
       state.items = [];
     },
     [clearShoppingCartItem.rejected.type]: (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    },
+    [checkout.pending.type]: (state) => {
+      state.loading = true;
+    },
+    [checkout.fulfilled.type]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.items = [];
+    },
+    [checkout.rejected.type]: (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     },

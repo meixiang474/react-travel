@@ -15,6 +15,7 @@ import {
   DetailPage,
   SearchPage,
   ShoppingCartPage,
+  PlaceOrderPage,
 } from "./pages";
 import { useSelector } from "store/hooks";
 import { getShoppingCart } from "store/shoppingCart/slice";
@@ -62,6 +63,11 @@ const App: React.FC = () => {
             isAuthenticated={token != null}
             path="/shoppingCart"
             component={ShoppingCartPage}
+          />
+          <PrivateRoute
+            isAuthenticated={token != null}
+            path="/placeOrder"
+            component={PlaceOrderPage}
           />
           <Route render={() => <h1>404 not found 页面去火星了！</h1>} />
         </Switch>

@@ -18,3 +18,7 @@ export function clearShoppingCartItemAPI(parameters: { itemIds: number[] }) {
     `/api/shoppingCart/items/(${parameters.itemIds.join(",")})`
   );
 }
+
+export function checkoutAPI() {
+  return request.post<any, any>(`/api/shoppingCart/checkout`);
+}

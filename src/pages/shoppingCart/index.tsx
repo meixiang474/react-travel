@@ -1,16 +1,19 @@
 import React from "react";
 import styles from "./index.module.scss";
 import { MainLayout } from "layouts";
-import { Row, Col, Affix } from "antd";
+import { Row, Col, Affix, message } from "antd";
 import { ProductList, PaymentCard } from "components";
-import { clearShoppingCartItem } from "store/shoppingCart/slice";
+import { clearShoppingCartItem, checkout } from "store/shoppingCart/slice";
 import { useSelector } from "store/hooks";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "store";
+import { useHistory } from "react-router";
 
 export function ShoppingCartPage() {
   const { loading, items } = useSelector((state) => state.shoppingCart);
   const dispatch = useDispatch<Dispatch>();
+
+  const history = useHistory();
 
   return (
     <MainLayout>
@@ -37,7 +40,15 @@ export function ShoppingCartPage() {
                       (item.discountPresent ? item.discountPresent : 1)
                   )
                   .reduce((a, b) => a + b, 0)}
-                onCheckout={() => {}}
+                onCheckout={async () => {
+                  if (items.length <= 0) return;
+                  const action = (await dispatch(checkout())) as any;
+                  if (action.error) {
+                    message.error("下单失败");
+                    return;
+                  }
+                  history.push("/placeOrder");
+                }}
                 onShoppingCartClear={() => {
                   dispatch(
                     clearShoppingCartItem({
